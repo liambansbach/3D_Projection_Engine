@@ -5,6 +5,8 @@ from scene import Scene
 from input_handler import InputHandler
 from controller.scene_controller import update_scene
 import time
+import projection
+from objects.camera import Camera
 
 
 # --------- Szene definieren (Würfelpunkte) ----------
@@ -21,9 +23,6 @@ cube1.translate_object(u=np.array([0, 0, 10]))
 cube2 = world.create_object(type="cube")
 cube2.translate_object(u=np.array([10, 0, 20])) 
 
-
-window_size = [1080,720]
-
 # --------- Kamera Setup ----------
 camera_resolution = [1080, 720]
 camera1 = world.create_camera(f=200, o_x=camera_resolution[0]/2, o_y=camera_resolution[1]/2) # 800x600 Bild
@@ -34,21 +33,8 @@ K = camera1.get_K()
 
 # --------- 3D Szene (linkes Fenster) ----------
 
-all_object_points = world.get_all_points()
+canvas3d, view3d, scatter3d = world.init_vispy_scene(window_size = [1080,720])
 
-canvas3d = scene.SceneCanvas(keys='interactive', title='3D Szene', size=(window_size[0], window_size[1]), show=True)
-view3d = canvas3d.central_widget.add_view()
-view3d.camera = scene.TurntableCamera(up='z', fov=45, distance=8)
-
-scatter3d = scene.visuals.Markers()
-scatter3d.set_data(all_object_points, edge_color='white', face_color='red', size=10)
-view3d.add(scatter3d)
-
-# Koordinatensystem der Welt und Achsen visualisieren
-world.draw_world_axis_vispy(view3d)
-
-# initialize the vispy objects for drawing
-world.init_vispy_objects(view3d)
 
 # Event Listener
 start_time = time.time()
@@ -86,9 +72,29 @@ def on_key_release(event):
     input_handler.key_release(key)
 
 def tick(event):
-    update_scene(input_handler, world, scatter3d, view3d)
+    update_scene(input_handler, world, scatter3d)
+
+    # Realtime-2D-Projektion berechnen
+    x_2d = projection.project_3d_to_2d(current_scene=world, current_camera=world.current_object if isinstance(world.current_object, Camera) else camera1)
+    # 2D-Projektionsplot updaten
+    if x_2d is not None and len(x_2d) > 0:
+        scatter2d.set_data(x_2d, edge_color='black', face_color='blue', size=8)
+
     current_time = time.time()
     calc_fps(end_time=current_time)
+
+
+# --------- 2D Projektion (rechtes Fenster) ----------
+canvas2d = scene.SceneCanvas(title='2D Projektion', size=(camera_resolution[0], camera_resolution[1]), show=True)
+view2d = canvas2d.central_widget.add_view()
+view2d.camera = scene.PanZoomCamera(rect=(0, 0, camera_resolution[0], camera_resolution[1]))
+view2d.camera.aspect = 1
+view2d.camera.flip = (False, True)  # Bildkoordinaten: (0,0) oben links
+
+scatter2d = scene.visuals.Markers()
+view2d.add(scatter2d)
+
+
     
 
 timer = app.Timer(interval=1/60, connect=tick, start=True)
@@ -109,7 +115,7 @@ app.run()
 
 
 # # --------- 2D Projektion (rechtes Fenster) ----------
-# canvas2d = scene.SceneCanvas(title='2D Projektion', size=(800, 600), show=True)
+# canvas2d = scene.SceneCanvas(title='2D Projektion', size=(camera_resolution[0], camera_resolution[1]), show=True)
 # view2d = canvas2d.central_widget.add_view()
 # view2d.camera = scene.PanZoomCamera(rect=(0, 0, 800, 600))
 # view2d.camera.aspect = 1
@@ -118,12 +124,13 @@ app.run()
 # scatter2d = scene.visuals.Markers()
 # view2d.add(scatter2d)
 
+# x = projection.project_3d_to_2d(current_camera=camera1, current_scene=world)
+
 # # --------- Update Funktion für 2D-Projektion ----------
 # def update_projection(event=None):
-#     uv = project_points(cube_points, camera1.get_R(), camera1.get_T(), camera1.K)
-#     scatter2d.set_data(uv, edge_color='black', face_color='blue', size=8)
+#     scatter2d.set_data(x, edge_color='black', face_color='blue', size=8)
 
-# --------- Timer für Live-Update ----------
-#timer = app.Timer(interval=0.05, connect=update_projection, start=True)
+# #--------- Timer für Live-Update ----------
+# timer = app.Timer(interval=0.05, connect=update_projection, start=True)
 
 

@@ -7,7 +7,7 @@ from input_handler import InputHandler
 from vispy import scene as sc
 
 
-def update_scene(input_handler: InputHandler, scene: Scene, scatter3d, view3d):
+def update_scene(input_handler: InputHandler, scene: Scene, scatter3d):
 
     #cam:Camera = scene.current_camera
     obj:SceneObject = scene.current_object
@@ -100,12 +100,7 @@ def update_scene(input_handler: InputHandler, scene: Scene, scatter3d, view3d):
     if input_handler.is_held('-') and obj.scale - 0.1 >= 0.5:
         obj.rescale_object(new_scale=obj.scale - 0.1)
 
-
-    # DrawCall for camera objects
-    segments, colors = scene.get_all_camera_line_segments()
-    scene.camera_lines.set_data(pos=segments, color=colors)
-
-    # DrawCall for Points
-    scatter3d.set_data(scene.get_all_points(), edge_color='white', face_color='red', size=10)
+    #Vispy Drawcalls to redraw the environment
+    scene.drawcall_vispy_objects(scatter3d)
 
     input_handler.end_frame()

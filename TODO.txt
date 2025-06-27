@@ -1,8 +1,1 @@
-- Update Scene, der die inputs handelt, ist aktuell für fast alle Bewegungen auf Kamera Objekte
-  beschränkt. Es wäre cool, wenn man das auf die Elternklasse erweitert um alle Objekte bewegen zu können
-  und nicht nur Kameras!
-
-- Aktuell speicher ich in self.lines (Vonder Kamera zum beispiel) keine Liste an Verbindungspunkten sowie [[0,1], [1,2]] usw...
-  sondern ich speicher darin direkt die vispy.Line Objekte. Ob das smart ist? MUSS NOCH EINHEITLICH WERDEN.
-
-  - Ich verwende die Funktionen init_visuals und update_visuals in der Kamera Klasse glaub garnict mehr. Es ist alle in get_all_camera_line_segments!
+- Auf Homogenous coordinates umstellen! (Vispy will 3d punkte als (N, 3) aber openGL als (N, 4)).

@@ -43,7 +43,7 @@ def update_scene(input_handler: InputHandler, scene: Scene, scatter3d, view3d):
             return
 
         if scene.current_object is None:
-            scene.current_object = scene.object_list[0]
+            scene.current_object = scene.objects_list[0]
         else:
             current_index = scene.objects_list.index(scene.current_object)
             next_index = (current_index + 1) % len(scene.objects_list)

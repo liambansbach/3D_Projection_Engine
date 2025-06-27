@@ -27,14 +27,7 @@ def update_scene(input_handler: InputHandler, scene: Scene, scatter3d, view3d):
     if input_handler.was_pressed_once('K'):
         camera_resolution = [1080, 720]
         new_camera = scene.create_camera(f=200, o_x=camera_resolution[0]/2, o_y=camera_resolution[1]/2) # 800x600 Bild
-        # new_camera.init_vispy_visuals(view3d)
-        # new_camera.update_vispy_visuals()
 
-        # new_camera.init_simple_visuals(view3d)
-        # new_camera.update_simple_visuals()
-        
-        #scene.draw_vispy_cameras(view3d)
-        #scatter3d.set_data(scene.get_all_points(), edge_color='white', face_color='red', size=10)
 
     if input_handler.was_pressed_once('1'):
         
@@ -106,31 +99,13 @@ def update_scene(input_handler: InputHandler, scene: Scene, scatter3d, view3d):
 
     if input_handler.is_held('-') and obj.scale - 0.1 >= 0.5:
         obj.rescale_object(new_scale=obj.scale - 0.1)
- 
 
-    # if moved:
-    #     if isinstance(obj, Camera):
-    #         #obj.update_vispy_visuals()
-    #         obj.update_simple_visuals()
 
-    # if obj.dirty:
-    #     if isinstance(obj, Camera):
-    #         obj.update_simple_visuals()
-    #         obj.dirty = False
-    
-    # elif isinstance(obj, Cube):
-    #     if obj.dirty:
-    #         #points = obj.get_transformed_points()
-    #         scatter3d.set_data(scene.get_all_points(), edge_color='white', face_color='red', size=10)
-    #         obj.dirty = False
-                
     # DrawCall for camera objects
     segments, colors = scene.get_all_camera_line_segments()
     scene.camera_lines.set_data(pos=segments, color=colors)
 
     # DrawCall for Points
     scatter3d.set_data(scene.get_all_points(), edge_color='white', face_color='red', size=10)
-
-    
 
     input_handler.end_frame()

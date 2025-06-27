@@ -47,11 +47,10 @@ view3d.add(scatter3d)
 # Koordinatensystem der Welt und Achsen visualisieren
 world.draw_world_axis_vispy(view3d)
 
-# draw all cameras
-world.draw_vispy_cameras(view3d)
+# initialize the vispy objects for drawing
+world.init_vispy_objects(view3d)
 
 # Event Listener
-
 start_time = time.time()
 current_fps:int = 0
 recent_fps = []

@@ -22,6 +22,7 @@ cube1.translate_object(u=np.array([0, 0, 10]))
 
 cube2 = world.create_object(type="cube")
 cube2.translate_object(u=np.array([10, 0, 20])) 
+cube2.rescale_object(new_scale=2)
 
 # --------- Kamera Setup ----------
 camera_resolution = [1080, 720]

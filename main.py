@@ -101,37 +101,3 @@ view2d.add(scatter2d)
 timer = app.Timer(interval=1/60, connect=tick, start=True)
 
 app.run()
-
-
-
-
-
-
-# def project_points(X_w, R, T, K):
-#     X_c = (R @ (X_w - T).T).T
-#     x_hom = (K @ X_c.T).T
-#     uv = x_hom[:, :2] / x_hom[:, 2, np.newaxis]
-#     return uv
-
-
-
-# # --------- 2D Projektion (rechtes Fenster) ----------
-# canvas2d = scene.SceneCanvas(title='2D Projektion', size=(camera_resolution[0], camera_resolution[1]), show=True)
-# view2d = canvas2d.central_widget.add_view()
-# view2d.camera = scene.PanZoomCamera(rect=(0, 0, 800, 600))
-# view2d.camera.aspect = 1
-# view2d.camera.flip = (False, True)  # y-Achse umdrehen
-
-# scatter2d = scene.visuals.Markers()
-# view2d.add(scatter2d)
-
-# x = projection.project_3d_to_2d(current_camera=camera1, current_scene=world)
-
-# # --------- Update Funktion für 2D-Projektion ----------
-# def update_projection(event=None):
-#     scatter2d.set_data(x, edge_color='black', face_color='blue', size=8)
-
-# #--------- Timer für Live-Update ----------
-# timer = app.Timer(interval=0.05, connect=update_projection, start=True)
-
-

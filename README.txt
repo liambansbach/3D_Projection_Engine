@@ -1,143 +1,146 @@
-📁 3D_Projection_Engine
-│
-├── camera.py           # Kameraklasse: Position, Rotation, Projektionsmatrix
-├── scene.py            # Enthält Weltpunkte (z. B. Würfel)
-├── projection.py       # Mathematische Transformationen: Welt → Kamera → Bild
-├── main.py             # Hauptprogramm: Fenster, Rendering, Steuerung
-└── README.txt          # Dieses Dokument
+3D_Projection_Engine
+=====================
 
-README.txt
-===========
-
-## 🎯 Projektziel
-
-Dieses Projekt simuliert eine einfache **3D-Welt mit Projektion auf eine 2D-Bildebene**, wie in einer Game Engine.
-
-Du baust:
-
-- eine kleine Welt aus 3D-Punkten
-- eine steuerbare Kamera mit Position und Blickrichtung
-- eine 2D-Projektionsanzeige, die zeigt, **wo diese Punkte im Kamerabild erscheinen**
+A minimal 3D scene engine that simulates a pinhole camera projection system in real-time using Python and Vispy. 
+The engine allows interactive placement and control of 3D objects and cameras, and renders both 3D views and 2D projections.
 
 ---
 
-## ✅ Voraussetzungen
+Project Goal
+------------
+
+This project simulates a simple 3D world and its projection onto a 2D image plane, much like a game engine or graphics pipeline.
+
+Key features:
+
+- Construct scenes from 3D primitives (e.g. cubes)
+- Add and control multiple cameras (position, orientation, intrinsic parameters)
+- Visualize both the 3D scene and the projected 2D image coordinates
+- Interact with the scene in real-time using keyboard input
+
+---
+
+Requirements
+------------
 
 - Python 3.x
-- `numpy`
-- `pygame` (für Fenster und Anzeige)
+- numpy
+- vispy
 
-Installieren mit:
+Install dependencies with:
 
-```
-pip install numpy pygame
-```
+    pip install numpy vispy
 
 ---
 
-## 📦 Struktur & Module
+Project Structure
+-----------------
 
-### camera.py
-
-- Klasse `Camera`
-  - Position `T` (Translation)
-  - Rotation `R` ( Rotation als Matrix)
-  - Methoden: `move(direction)`, `rotate(axis, angle)`
-  - Methode: `get_view_matrix()` und `get_K()` (Kameramatrix)
-
-### scene.py
-
-- Definiert Weltpunkte, z. B. 3D-Würfel oder Gitter
-- Rückgabe: Liste von `np.array`-Vektoren mit Koordinaten in Weltbezug
-
-### projection.py
-
-- Funktionen:
-  - `world_to_camera(X_w, R, T)` → X_c
-  - `project(X_c, K)` → 2D-Bildpunkt (u, v)
-- Nutzt perspektivische Projektion nach dem Pinhole-Modell
-
-### main.py
-
-- Öffnet ein `pygame`-Fenster (z. B. 1920×1080)
-- Lädt Szene
-- Steuert Kamera mit Tasten
-- Zeichnet projizierte Punkte
+    3D_Projection_Engine/
+    ├── main.py              # Entry point: window setup, event loop, rendering
+    ├── scene.py             # Scene manager: stores and updates 3D objects and cameras
+    ├── input_handler.py     # Keyboard input manager
+    ├── scene_controller.py  # Handles per-frame updates (movement, rotation, object switching)
+    ├── math_sm.py           # Linear algebra utilities (rotation, translation, pose matrix)
+    ├── objects/
+    │   ├── base.py          # Base class for all scene objects
+    │   ├── cube.py          # Cube object with vertex and face definitions
+    │   └── camera.py        # Camera object with intrinsic matrix and visualization
+    └── README.md            # This document
 
 ---
 
-## 🧩 Schritt-für-Schritt Anleitung
+Usage Guide
+-----------
 
-### 1. Weltpunkte definieren (scene.py)
+1. Running the Engine
 
-- z. B. Würfel mit 8 Ecken:
-  ```python
-  np.array([
-      [0, 0, 0],
-      [1, 0, 0],
-      [1, 1, 0],
-      [0, 1, 0],
-      [0, 0, 1],
-      [1, 0, 1],
-      [1, 1, 1],
-      [0, 1, 1],
-  ])
-  ```
+    Start with:
 
-### 2. Kamera erstellen (camera.py)
+        python main.py
 
-- Startposition: T = [0, 0, 5]
-- Startrotation: R = Identity (np.eye(3))
-- Steuerung per Tastatur (WASD, QE etc.)
+    This launches a Vispy window displaying the 3D scene with a first camera and some cubes.
 
-### 3. Projektion implementieren (projection.py)
+2. Controls
 
-- Welt → Kamera:
-  ```python
-  X_c = R @ (X_w - T)
-  ```
-- Kamera → Bild:
-  ```python
-  x_hom = K @ X_c
-  u = x_hom[0] / x_hom[2]
-  v = x_hom[1] / x_hom[2]
-  ```
-
-### 4. Fenster & Rendering (main.py)
-
-- Fenster mit pygame
-- Punkte als Kreise auf 2D-Fläche zeichnen
-- Clipping für Punkte außerhalb von (0, 1920), (0, 1080)
-
-### 5. Interaktion
-
-- Bewegung mit Tasten (WASDQE)
-- Optional: Mausrotation
-- Optional: UI-Overlay mit Position, FOV etc.
+    - Move the selected object:
+      - W/S: forward/back
+      - A/D: left/right
+      - Space/Ctrl: up/down
+    - Rotate:
+      - Q/E: yaw
+      - Arrow keys: pitch/roll
+    - Scale:
+      - + / - : increase/decrease size
+    - Reset: R resets position, rotation, and scale
+    - Switch active object: 1
+    - Create object: U adds a cube at a random position
+    - Delete object: I
+    - Add camera: K
 
 ---
 
-## ✨ Erweiterungsideen
+Camera & Projection
+-------------------
 
-- Linien zwischen Punkten (Würfelkanten)
-- Farbcodierung nach Tiefe (z → Farbe)
-- Dynamische Brennweite mit Mausrad
-- Export als Screenshot oder GIF
-- Zweite Kamera (z. B. Top-Down)
+Each camera is defined by intrinsic parameters (f, o_x, o_y) and visualized with a frustum and axis lines. The projection follows the standard pinhole model:
 
----
+    x = K · R · (X_w − T)
 
-## 🧠 Hintergrundwissen
-
-- Pinhole-Kameramodell:
-  ```
-  x = K · R · (X_w − T)
-  ```
-- Du simulierst, was Game Engines machen (Unreal, Unity, Blender)
-- Alles basiert auf numpy + einfacher 2D-Darstellung
+Cameras can be added dynamically and will appear in the 3D view. Intrinsics are set on creation.
 
 ---
 
-## 🏁 Starten
+Features
+--------
 
-Beginne mit der Datei `main.py`. Von dort werden `scene`, `camera` und `projection` eingebunden.
+- Object hierarchy (cubes, cameras) with shared transform logic
+- Modular input and update handling
+- Real-time FPS display
+- Scalable rendering with Vispy
+- Support for multiple cameras and object selection
+
+---
+
+Possible Extensions
+-------------------
+
+- Draw edges and faces for cube geometry
+- Depth-based color shading
+- Mouse-based object manipulation
+- Support for additional primitives (spheres, planes, etc.)
+
+---
+
+Background
+----------
+
+This engine is built around the core concepts of 3D graphics and computer vision (Computer Vision II: Multiple View Geometry (3D Computer Vision) (IN2228)):
+
+- Pinhole camera model
+- Homogeneous transformations
+- Real-time interaction
+- Scene graphs and object hierarchies
+
+It serves as a hands-on learning project and a foundation for more advanced visual computing applications (e.g. rendering, robotics, SLAM, AR).
+
+---
+
+Future Plans
+------------
+
+As the next step, the engine is intended to serve as a playground for implementing and visualizing classic computer vision algorithms covered in lecture. Planned additions include:
+
+- 8-Point Algorithm
+- Bundle Adjustment
+- Simultaneous Localization and Mapping (SLAM)
+- 3D Reconstruction from Multiple Views
+
+These features are not implemented yet, but the architecture is being developed with these goals in mind.
+
+---
+
+Getting Started
+---------------
+
+Start modifying main.py. From there, you can explore the scene, camera, and controller modules.

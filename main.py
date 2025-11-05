@@ -95,9 +95,6 @@ view2d.camera.flip = (False, True)  # Bildkoordinaten: (0,0) oben links
 scatter2d = scene.visuals.Markers()
 view2d.add(scatter2d)
 
-
-    
-
 timer = app.Timer(interval=1/60, connect=tick, start=True)
 
 app.run()
